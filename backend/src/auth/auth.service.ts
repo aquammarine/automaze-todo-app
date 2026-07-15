@@ -45,7 +45,7 @@ export class AuthService {
     const user = await this.usersService.findByEmail(email);
     if (!user) throw new BadRequestException('Invalid credentials');
 
-    const isPasswordValid = bcrypt.compare(password, user.password);
+    const isPasswordValid = await bcrypt.compare(password, user.password);
 
     if (!isPasswordValid) throw new BadRequestException('Invalid credentials');
 
