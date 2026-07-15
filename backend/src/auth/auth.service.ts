@@ -51,7 +51,7 @@ export class AuthService {
 
     const tokens = await this.generateToken(user.id, user.email);
 
-    return { user, tokens };
+    return { user: { id: user.id, email: user.email }, tokens };
   }
 
   async logout(refreshToken: string) {
