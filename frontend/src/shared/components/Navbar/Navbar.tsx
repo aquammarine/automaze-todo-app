@@ -11,13 +11,10 @@ function Navbar() {
     <header className="border-b bg-background/80 backdrop-blur-sm sticky top-0 z-10">
       <div className="mx-auto flex h-14 max-w-5xl items-center justify-between px-4">
         <Link to="/" className="flex items-center gap-2">
-          <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-gradient-to-br from-primary to-primary/60">
-            <span className="text-primary-foreground text-xs font-bold">A</span>
-          </div>
-          <span className="font-semibold">Automaze</span>
+          <span className="font-semibold">To-Do Application</span>
         </Link>
 
-        {user && (
+        {user ? (
           <div className="flex items-center gap-3">
             <span className="text-muted-foreground text-sm">{user.email}</span>
             <Button
@@ -27,6 +24,15 @@ function Navbar() {
               onClick={() => logout.mutate()}
             >
               {logout.isPending ? "Signing out..." : "Sign out"}
+            </Button>
+          </div>
+        ) : (
+          <div className="flex items-center gap-2">
+            <Button variant="ghost" size="sm">
+              <Link to="/login">Sign in</Link>
+            </Button>
+            <Button size="sm">
+              <Link to="/register">Sign up</Link>
             </Button>
           </div>
         )}
