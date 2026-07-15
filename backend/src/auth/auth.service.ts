@@ -11,6 +11,7 @@ import { RedisService } from 'src/infra/cache/redis/redis.service';
 import { UsersService } from 'src/users/users.service';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
+import { AuthResultDto } from './dto/auth-result.dto';
 
 @Injectable()
 export class AuthService {
@@ -20,7 +21,7 @@ export class AuthService {
     private readonly jwt: JwtService,
   ) {}
 
-  async register(registerDto: RegisterDto): Promise<AuthTokensDto> {
+  async register(registerDto: RegisterDto): Promise<AuthResultDto> {
     const { email, password } = registerDto;
 
     const user = await this.usersService.findByEmail(email);
@@ -33,10 +34,12 @@ export class AuthService {
       password: passwordHash,
     });
 
-    return await this.generateToken(newUser.id, newUser.email);
+    const tokens = await this.generateToken(newUser.id, newUser.email);
+
+    return { user: { id: newUser.id, email: newUser.email }, tokens };
   }
 
-  async login(loginDto: LoginDto): Promise<AuthTokensDto> {
+  async login(loginDto: LoginDto): Promise<AuthResultDto> {
     const { email, password } = loginDto;
 
     const user = await this.usersService.findByEmail(email);
@@ -46,7 +49,9 @@ export class AuthService {
 
     if (!isPasswordValid) throw new BadRequestException('Invalid credentials');
 
-    return await this.generateToken(user.id, user.email);
+    const tokens = await this.generateToken(user.id, user.email);
+
+    return { user, tokens };
   }
 
   async logout(refreshToken: string) {

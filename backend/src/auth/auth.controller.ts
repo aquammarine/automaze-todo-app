@@ -31,15 +31,15 @@ export class AuthController {
     @Body() dto: LoginDto,
     @Res({ passthrough: true }) response: Response,
   ): Promise<LoginResponseDto> {
-    const { refreshToken, accessToken } = await this.authService.login(dto);
+    const { user, tokens } = await this.authService.login(dto);
 
-    response.cookie('refreshToken', refreshToken, {
+    response.cookie('refreshToken', tokens.refreshToken, {
       httpOnly: true,
       sameSite: 'lax',
       maxAge: 30 * 24 * 60 * 60 * 1000,
     });
 
-    return { accessToken };
+    return { user, accessToken: tokens.accessToken };
   }
 
   @Post('register')
@@ -47,15 +47,15 @@ export class AuthController {
     @Body() dto: RegisterDto,
     @Res({ passthrough: true }) response: Response,
   ): Promise<RegisterResponseDto> {
-    const { refreshToken, accessToken } = await this.authService.register(dto);
+    const { user, tokens } = await this.authService.register(dto);
 
-    response.cookie('refreshToken', refreshToken, {
+    response.cookie('refreshToken', tokens.refreshToken, {
       httpOnly: true,
       sameSite: 'lax',
       maxAge: 30 * 24 * 60 * 60 * 1000,
     });
 
-    return { accessToken };
+    return { user, accessToken: tokens.accessToken };
   }
 
   @Post('logout')
