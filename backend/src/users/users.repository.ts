@@ -20,6 +20,10 @@ export class UsersRepository {
   async findById(id: string) {
     return await this.prisma.user.findUnique({
       where: { id },
+      select: {
+        id: true,
+        email: true,
+      },
     });
   }
 
