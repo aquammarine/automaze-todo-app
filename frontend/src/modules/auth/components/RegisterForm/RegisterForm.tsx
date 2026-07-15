@@ -1,6 +1,13 @@
 import { Controller } from "react-hook-form";
 import { Link } from "@tanstack/react-router";
-import { Button, Field, FieldError, FieldGroup, FieldLabel, PasswordInput } from "@/shared/components/ui";
+import {
+  Button,
+  Field,
+  FieldError,
+  FieldGroup,
+  FieldLabel,
+  PasswordInput,
+} from "@/shared/components/ui";
 import { Input } from "@/shared/components/ui/input";
 import { useRegisterForm } from "../../hooks/useRegisterForm";
 import { useRegisterMutation } from "../../hooks/useRegisterMutation";
@@ -11,7 +18,10 @@ function RegisterForm() {
 
   const onSubmit = form.handleSubmit((data) => mutation.mutateAsync(data));
 
-  const { control, formState: { errors, isSubmitting } } = form;
+  const {
+    control,
+    formState: { errors, isSubmitting },
+  } = form;
 
   return (
     <form onSubmit={onSubmit} className="flex flex-col gap-6">
@@ -58,7 +68,9 @@ function RegisterForm() {
           control={control}
           render={({ field, fieldState }) => (
             <Field data-invalid={fieldState.invalid}>
-              <FieldLabel htmlFor="confirmPassword">Confirm password</FieldLabel>
+              <FieldLabel htmlFor="confirmPassword">
+                Confirm password
+              </FieldLabel>
               <PasswordInput
                 id="confirmPassword"
                 placeholder="Repeat your password"
@@ -74,17 +86,27 @@ function RegisterForm() {
 
       {errors.root && (
         <div className="bg-destructive/10 border-destructive/20 rounded-lg border px-4 py-3">
-          <span className="text-destructive text-sm">{errors.root.message}</span>
+          <span className="text-destructive text-sm">
+            {errors.root.message}
+          </span>
         </div>
       )}
 
-      <Button type="submit" size="lg" disabled={isSubmitting} className="w-full">
+      <Button
+        type="submit"
+        size="lg"
+        disabled={isSubmitting}
+        className="w-full"
+      >
         {isSubmitting ? "Creating account..." : "Create account"}
       </Button>
 
       <p className="text-center text-sm">
         Already have an account?{" "}
-        <Link to="/" className="text-primary font-semibold hover:underline">
+        <Link
+          to="/login"
+          className="text-primary font-semibold hover:underline"
+        >
           Sign in
         </Link>
       </p>
