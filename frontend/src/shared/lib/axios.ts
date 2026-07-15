@@ -3,41 +3,35 @@ import { useAuthStore } from "../stores/auth.store";
 
 export const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL,
-  headers: {
-    "Content-Type": "application/json",
-  },
   withCredentials: true,
 });
 
 let isRefreshing = false;
 let failedQueue: Array<{
-  resolve: (token: string) => void;
+  resolve: () => void;
   reject: (err: unknown) => void;
 }> = [];
 
-const processQueue = (error: unknown, token: string | null = null) => {
+const processQueue = (error: unknown) => {
   failedQueue.forEach((prom) => {
-    if (token) {
-      prom.resolve(token);
-    } else {
+    if (error) {
       prom.reject(error);
+    } else {
+      prom.resolve();
     }
   });
   failedQueue = [];
 };
 
-api.interceptors.request.use(
-  (config) => {
-    const accessToken = useAuthStore.getState().token;
+api.interceptors.request.use((config) => {
+  const token = useAuthStore.getState().token;
 
-    if (accessToken && config.headers) {
-      config.headers.Authorization = `Bearer ${accessToken}`;
-    }
-    
-    return config;
-  },
-  (error) => Promise.reject(error),
-);
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+
+  return config;
+});
 
 api.interceptors.response.use(
   (response) => response,
@@ -48,11 +42,8 @@ api.interceptors.response.use(
       if (isRefreshing) {
         return new Promise((resolve, reject) => {
           failedQueue.push({
-            resolve: (token: string) => {
-              originalRequest.headers.Authorization = `Bearer ${token}`;
-              resolve(api(originalRequest));
-            },
-            reject: (err: unknown) => reject(err),
+            resolve: () => resolve(api(originalRequest)),
+            reject: (err) => reject(err),
           });
         });
       }
@@ -61,23 +52,19 @@ api.interceptors.response.use(
       isRefreshing = true;
 
       try {
-        const response = await axios.post(
+        const { data } = await axios.post(
           `${api.defaults.baseURL}/auth/refresh`,
           {},
           { withCredentials: true },
         );
-        const { accessToken, user } = response.data;
 
-        useAuthStore.getState().setAuth(accessToken, user);
-
-        originalRequest.headers.Authorization = `Bearer ${accessToken}`;
-        processQueue(null, accessToken);
+        useAuthStore.getState().setAuth(data.accessToken, data.user);
+        processQueue(null);
 
         return api(originalRequest);
       } catch (refreshError) {
-        processQueue(refreshError, null);
+        processQueue(refreshError);
         useAuthStore.getState().clearAuth();
-
         window.location.href = "/login";
         return Promise.reject(refreshError);
       } finally {
