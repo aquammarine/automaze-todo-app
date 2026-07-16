@@ -1,19 +1,20 @@
 import { TaskFormShell } from "../TaskFormShell";
 import { TaskFormFields } from "../TaskFormFields";
-import { useCreateTaskForm } from "../../hooks/useCreateTaskForm";
-import { useCreateTaskMutation } from "../../hooks/useCreateTaskMutation";
+import { useEditTaskForm } from "../../hooks/useEditTaskForm";
+import { useUpdateTaskMutation } from "../../hooks/useUpdateTaskMutation";
+import type { Task } from "../../types";
 
-interface CreateTaskModalProps {
+interface EditTaskModalProps {
+  task: Task;
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }
 
-function CreateTaskModal({ open, onOpenChange }: CreateTaskModalProps) {
-  const form = useCreateTaskForm();
-  const mutation = useCreateTaskMutation(form.setError, () => {
-    form.reset();
-    onOpenChange(false);
-  });
+function EditTaskModal({ task, open, onOpenChange }: EditTaskModalProps) {
+  const form = useEditTaskForm(task);
+  const mutation = useUpdateTaskMutation(task.id, form.setError, () =>
+    onOpenChange(false),
+  );
 
   const onSubmit = form.handleSubmit((data) => mutation.mutateAsync(data));
 
@@ -32,10 +33,10 @@ function CreateTaskModal({ open, onOpenChange }: CreateTaskModalProps) {
     <TaskFormShell
       open={open}
       onOpenChange={onOpenChange}
-      title="New Task"
+      title="Edit Task"
       onSubmit={onSubmit}
       onCancel={handleCancel}
-      submitLabel={isSubmitting ? "Creating..." : "Create task"}
+      submitLabel={isSubmitting ? "Saving..." : "Save changes"}
       isSubmitting={isSubmitting}
       error={errors.root?.message}
     >
@@ -44,4 +45,4 @@ function CreateTaskModal({ open, onOpenChange }: CreateTaskModalProps) {
   );
 }
 
-export { CreateTaskModal };
+export { EditTaskModal };
