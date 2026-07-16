@@ -24,3 +24,15 @@ export {
 export { Label } from "./label";
 export { PasswordInput } from "../PasswordInput";
 export { Toaster } from "./sonner";
+export {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogOverlay,
+  DialogPortal,
+  DialogTitle,
+  DialogTrigger,
+} from "./dialog";
