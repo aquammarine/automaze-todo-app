@@ -4,6 +4,7 @@ import { TaskCard } from "../TaskCard";
 interface TaskKanbanProps {
   tasks: Task[];
   completion?: TaskFilterParams["completion"];
+  onTaskClick: (task: Task) => void;
 }
 
 const ALL_COLUMNS = [
@@ -21,7 +22,7 @@ const ALL_COLUMNS = [
   },
 ] as const;
 
-function TaskKanban({ tasks, completion }: TaskKanbanProps) {
+function TaskKanban({ tasks, completion, onTaskClick }: TaskKanbanProps) {
   const columns =
     completion === "undone"
       ? [ALL_COLUMNS[0]]
@@ -52,7 +53,7 @@ function TaskKanban({ tasks, completion }: TaskKanbanProps) {
                 </p>
               ) : (
                 columnTasks.map((task) => (
-                  <TaskCard key={task.id} task={task} />
+                  <TaskCard key={task.id} task={task} onClick={() => onTaskClick(task)} />
                 ))
               )}
             </div>
