@@ -55,6 +55,7 @@ export class AuthService {
   }
 
   async logout(refreshToken: string) {
+    if (!refreshToken) return;
     return await this.redis.del(`refresh:${refreshToken}`);
   }
 
