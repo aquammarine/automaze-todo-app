@@ -36,4 +36,8 @@ export class TasksService {
   async findAll(userId: string) {
     return await this.tasksRepository.findAll(userId);
   }
+
+  async findByTitle(title: string, userId: string) {
+    return await this.tasksRepository.findByTitle(title, userId);
+  }
 }

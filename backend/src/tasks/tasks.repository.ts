@@ -37,4 +37,13 @@ export class TasksRepository {
       where: { userId },
     });
   }
+
+  findByTitle(title: string, userId: string) {
+    return this.prisma.task.findMany({
+      where: {
+        userId,
+        title: { contains: title, mode: 'insensitive' },
+      },
+    });
+  }
 }

@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Patch, Delete, Param, UseGuards, Body, HttpCode, HttpStatus } from '@nestjs/common';
+import { Controller, Get, Post, Patch, Delete, Param, Query, UseGuards, Body, HttpCode, HttpStatus } from '@nestjs/common';
 import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard';
 import { TasksService } from './tasks.service';
 import { CurrentUser } from 'src/common/decorators/current-user.decorator';
@@ -16,6 +16,14 @@ export class TasksController {
     @CurrentUser() user: { id: string },
   ): Promise<TaskResponseDto[]> {
     return await this.tasksService.findAll(user.id);
+  }
+
+  @Get('search')
+  async findByTitle(
+    @CurrentUser() user: { id: string },
+    @Query('title') title: string,
+  ): Promise<TaskResponseDto[]> {
+    return await this.tasksService.findByTitle(title, user.id);
   }
 
   @Get(':id')
