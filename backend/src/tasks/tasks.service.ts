@@ -29,15 +29,11 @@ export class TasksService {
     return task;
   }
 
-  async findAll(userId: string, completion: CompletionFilter = CompletionFilter.ALL) {
+  async findAll(userId: string, completion: CompletionFilter = CompletionFilter.ALL, title?: string) {
     const completed =
       completion === CompletionFilter.DONE ? true :
       completion === CompletionFilter.UNDONE ? false :
       undefined;
-    return await this.tasksRepository.findAll(userId, completed);
-  }
-
-  async findByTitle(title: string, userId: string) {
-    return await this.tasksRepository.findByTitle(title, userId);
+    return await this.tasksRepository.findAll(userId, completed, title);
   }
 }

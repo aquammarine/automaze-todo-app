@@ -31,20 +31,12 @@ export class TasksRepository {
     });
   }
 
-  findAll(userId: string, completed?: boolean) {
+  findAll(userId: string, completed?: boolean, title?: string) {
     return this.prisma.task.findMany({
       where: {
         userId,
         ...(completed !== undefined && { completed }),
-      },
-    });
-  }
-
-  findByTitle(title: string, userId: string) {
-    return this.prisma.task.findMany({
-      where: {
-        userId,
-        title: { contains: title, mode: 'insensitive' },
+        ...(title && { title: { contains: title, mode: 'insensitive' } }),
       },
     });
   }
