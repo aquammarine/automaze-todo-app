@@ -1,10 +1,12 @@
 import {
+  Badge,
   Card,
   CardContent,
   CardHeader,
   CardTitle,
 } from "@/shared/components/ui";
 import type { Task } from "../../types";
+import { getPriorityVariant } from "../../utils/priority";
 
 interface TaskCardProps {
   task: Task;
@@ -12,7 +14,10 @@ interface TaskCardProps {
 
 function TaskCard({ task }: TaskCardProps) {
   return (
-    <Card size="sm" className="cursor-pointer transition-shadow hover:shadow-md">
+    <Card
+      size="sm"
+      className="cursor-pointer transition-shadow hover:shadow-md"
+    >
       <CardHeader>
         <CardTitle>{task.title}</CardTitle>
       </CardHeader>
@@ -24,9 +29,9 @@ function TaskCard({ task }: TaskCardProps) {
         ) : (
           <span />
         )}
-        <span className="bg-muted text-muted-foreground rounded-full px-2 py-0.5 text-xs font-medium">
+        <Badge variant={getPriorityVariant(task.priority)}>
           P{task.priority}
-        </span>
+        </Badge>
       </CardContent>
     </Card>
   );
