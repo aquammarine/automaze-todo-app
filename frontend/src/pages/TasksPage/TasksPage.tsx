@@ -1,9 +1,12 @@
+import { useState } from "react";
 import { useTasksQuery } from "@/modules/tasks/hooks";
+import { CreateTaskModal } from "@/modules/tasks/components/CreateTaskModal";
+import { TaskTable } from "@/modules/tasks/components/TaskTable";
 import { Button } from "@/shared/components/ui";
 import { Plus } from "lucide-react";
-import { TaskTable } from "@/modules/tasks/components/TaskTable";
 
 function TasksPage() {
+  const [modalOpen, setModalOpen] = useState(false);
   const { data: tasks, isLoading, isError } = useTasksQuery();
 
   if (isLoading) {
@@ -23,17 +26,21 @@ function TasksPage() {
   }
 
   return (
-    <div className="flex flex-col gap-6">
-      <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold tracking-tight">Tasks</h1>
-        <Button size="sm">
-          <Plus className="size-4" />
-          Create task
-        </Button>
+    <>
+      <div className="flex flex-col gap-6">
+        <div className="flex items-center justify-between">
+          <h1 className="text-2xl font-bold tracking-tight">Tasks</h1>
+          <Button size="sm" onClick={() => setModalOpen(true)}>
+            <Plus className="size-4" />
+            Create task
+          </Button>
+        </div>
+
+        <TaskTable tasks={tasks ?? []} />
       </div>
 
-      <TaskTable tasks={tasks ?? []} />
-    </div>
+      <CreateTaskModal open={modalOpen} onOpenChange={setModalOpen} />
+    </>
   );
 }
 
