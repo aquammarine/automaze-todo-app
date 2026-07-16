@@ -22,5 +22,5 @@ export {
   FieldTitle,
 } from "./field";
 export { Label } from "./label";
-export { PasswordInput } from "./PasswordInput";
+export { PasswordInput } from "../PasswordInput";
 export { Toaster } from "./sonner";
