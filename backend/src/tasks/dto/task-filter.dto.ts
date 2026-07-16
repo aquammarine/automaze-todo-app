@@ -1,10 +1,6 @@
 import { IsEnum, IsOptional, IsString } from 'class-validator';
-
-export enum CompletionFilter {
-  ALL = 'all',
-  DONE = 'done',
-  UNDONE = 'undone',
-}
+import { CompletionFilter } from '../enums/completion-filter.enum';
+import { SortOrder } from '../enums/sort-order.enum';
 
 export class TaskFilterDto {
   @IsEnum(CompletionFilter)
@@ -14,4 +10,8 @@ export class TaskFilterDto {
   @IsString()
   @IsOptional()
   title?: string;
+
+  @IsEnum(SortOrder)
+  @IsOptional()
+  priorityOrder?: SortOrder;
 }
