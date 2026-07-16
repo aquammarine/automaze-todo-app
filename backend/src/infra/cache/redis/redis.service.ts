@@ -23,6 +23,6 @@ export class RedisService extends Redis implements OnModuleDestroy {
   }
 
   async onModuleDestroy() {
-    await this.quit;
+    await this.quit();
   }
 }
