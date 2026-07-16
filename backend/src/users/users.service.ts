@@ -19,8 +19,4 @@ export class UsersService {
     if (!user) throw new NotFoundException("User doesn't exists");
     return user;
   }
-
-  remove(id: string) {
-    return `This action removes a #${id} user`;
-  }
 }
