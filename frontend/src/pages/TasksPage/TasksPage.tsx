@@ -1,21 +1,16 @@
 import { useState } from "react";
 import { useTasksQuery } from "@/modules/tasks/hooks";
 import { CreateTaskModal } from "@/modules/tasks/components/CreateTaskModal";
-import { TaskTable } from "@/modules/tasks/components/TaskTable";
+import { TaskFilters, TaskFiltersSkeleton } from "@/modules/tasks/components/TaskFilters";
+import { TaskKanban, TaskKanbanSkeleton } from "@/modules/tasks/components/TaskKanban";
+import type { TaskFilterParams } from "@/modules/tasks/types";
 import { Button } from "@/shared/components/ui";
 import { Plus } from "lucide-react";
 
 function TasksPage() {
   const [modalOpen, setModalOpen] = useState(false);
-  const { data: tasks, isLoading, isError } = useTasksQuery();
-
-  if (isLoading) {
-    return (
-      <div className="flex items-center justify-center py-20">
-        <p className="text-muted-foreground text-sm">Loading tasks...</p>
-      </div>
-    );
-  }
+  const [filters, setFilters] = useState<TaskFilterParams>({});
+  const { data: tasks, isFetching, isError } = useTasksQuery(filters);
 
   if (isError) {
     return (
@@ -36,7 +31,16 @@ function TasksPage() {
           </Button>
         </div>
 
-        <TaskTable tasks={tasks ?? []} />
+        <TaskFilters filters={filters} onChange={setFilters} />
+
+        {isFetching ? (
+          <TaskKanbanSkeleton completion={filters.completion} />
+        ) : (
+          <TaskKanban
+            tasks={tasks ?? []}
+            completion={filters.completion}
+          />
+        )}
       </div>
 
       <CreateTaskModal open={modalOpen} onOpenChange={setModalOpen} />
