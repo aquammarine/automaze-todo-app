@@ -18,4 +18,22 @@ export class TasksService {
       throw new NotFoundException(`Task ${id} not found`);
     }
   }
+
+  async delete(id: string, userId: string) {
+    try {
+      return await this.tasksRepository.delete(id, userId);
+    } catch {
+      throw new NotFoundException(`Task ${id} not found`);
+    }
+  }
+
+  async findById(id: string, userId: string) {
+    const task = await this.tasksRepository.findById(id, userId);
+    if (!task) throw new NotFoundException(`Task ${id} not found`);
+    return task;
+  }
+
+  async findAll(userId: string) {
+    return await this.tasksRepository.findAll(userId);
+  }
 }
