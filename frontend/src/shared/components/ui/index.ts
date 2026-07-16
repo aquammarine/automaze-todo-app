@@ -21,6 +21,7 @@ export {
   FieldContent,
   FieldTitle,
 } from "./field";
+export { Input } from "./input";
 export { Label } from "./label";
 export { PasswordInput } from "../PasswordInput";
 export { Toaster } from "./sonner";
@@ -55,3 +56,4 @@ export {
   TabsContent,
   tabsListVariants,
 } from "./tabs";
+export { Skeleton } from "./skeleton";
