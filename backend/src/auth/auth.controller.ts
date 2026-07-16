@@ -7,6 +7,7 @@ import {
   Res,
   HttpCode,
   UseGuards,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { CurrentUser } from 'src/common/decorators/current-user.decorator';
 import { AuthService } from './auth.service';
@@ -69,6 +70,27 @@ export class AuthController {
     const refreshToken = request.cookies['refreshToken'];
     await this.authService.logout(refreshToken);
     response.clearCookie('refreshToken');
+  }
+
+  @Post('refresh')
+  async refresh(
+    @Req() request: Request,
+    @Res({ passthrough: true }) response: Response,
+  ): Promise<{ accessToken: string }> {
+    const oldRefreshToken = request.cookies['refreshToken'];
+    if (!oldRefreshToken) throw new UnauthorizedException('No refresh token');
+
+    const { accessToken, refreshToken } =
+      await this.authService.refresh(oldRefreshToken);
+
+    response.cookie('refreshToken', refreshToken, {
+      httpOnly: true,
+      sameSite: 'lax',
+      secure: process.env.NODE_ENV === 'production',
+      maxAge: 30 * 24 * 60 * 60 * 1000,
+    });
+
+    return { accessToken };
   }
 
   @Get('me')
