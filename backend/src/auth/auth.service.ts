@@ -61,10 +61,7 @@ export class AuthService {
 
   async generateToken(id: string, email: string): Promise<AuthTokensDto> {
     const payload = { id, email };
-    const accessToken = await this.jwt.signAsync(payload, {
-      secret: process.env.JWT_SECRET,
-      expiresIn: '15m',
-    });
+    const accessToken = await this.jwt.signAsync(payload);
 
     const refreshToken = crypto.randomUUID();
     await this.redis.set(
