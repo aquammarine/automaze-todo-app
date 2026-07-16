@@ -58,3 +58,4 @@ export {
 } from "./tabs";
 export { Skeleton } from "./skeleton";
 export { Badge, badgeVariants } from "./badge";
+export { Separator } from "./separator";

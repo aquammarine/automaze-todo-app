@@ -1,14 +1,16 @@
 import { useState } from "react";
 import { useTasksQuery } from "@/modules/tasks/hooks";
 import { CreateTaskModal } from "@/modules/tasks/components/CreateTaskModal";
-import { TaskFilters, TaskFiltersSkeleton } from "@/modules/tasks/components/TaskFilters";
+import { EditTaskModal } from "@/modules/tasks/components/EditTaskModal";
+import { TaskFilters } from "@/modules/tasks/components/TaskFilters";
 import { TaskKanban, TaskKanbanSkeleton } from "@/modules/tasks/components/TaskKanban";
-import type { TaskFilterParams } from "@/modules/tasks/types";
+import type { Task, TaskFilterParams } from "@/modules/tasks/types";
 import { Button } from "@/shared/components/ui";
 import { Plus } from "lucide-react";
 
 function TasksPage() {
-  const [modalOpen, setModalOpen] = useState(false);
+  const [createOpen, setCreateOpen] = useState(false);
+  const [editingTask, setEditingTask] = useState<Task | null>(null);
   const [filters, setFilters] = useState<TaskFilterParams>({});
   const { data: tasks, isFetching, isError } = useTasksQuery(filters);
 
@@ -25,7 +27,7 @@ function TasksPage() {
       <div className="flex flex-col gap-6">
         <div className="flex items-center justify-between">
           <h1 className="text-2xl font-bold tracking-tight">Tasks</h1>
-          <Button size="sm" onClick={() => setModalOpen(true)}>
+          <Button size="sm" onClick={() => setCreateOpen(true)}>
             <Plus className="size-4" />
             Create task
           </Button>
@@ -39,11 +41,20 @@ function TasksPage() {
           <TaskKanban
             tasks={tasks ?? []}
             completion={filters.completion}
+            onTaskClick={setEditingTask}
           />
         )}
       </div>
 
-      <CreateTaskModal open={modalOpen} onOpenChange={setModalOpen} />
+      <CreateTaskModal open={createOpen} onOpenChange={setCreateOpen} />
+
+      {editingTask && (
+        <EditTaskModal
+          task={editingTask}
+          open={!!editingTask}
+          onOpenChange={(open) => !open && setEditingTask(null)}
+        />
+      )}
     </>
   );
 }
