@@ -5,6 +5,7 @@ import { CurrentUser } from 'src/common/decorators/current-user.decorator';
 import { TaskResponseDto } from './dto/task-response.dto';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { UpdateTaskDto } from './dto/update-task.dto';
+import { CompletionFilter, TaskFilterDto } from './dto/task-filter.dto';
 
 @Controller('tasks')
 @UseGuards(JwtAuthGuard)
@@ -14,8 +15,9 @@ export class TasksController {
   @Get()
   async findAll(
     @CurrentUser() user: { id: string },
+    @Query() filter: TaskFilterDto,
   ): Promise<TaskResponseDto[]> {
-    return await this.tasksService.findAll(user.id);
+    return await this.tasksService.findAll(user.id, filter.completion);
   }
 
   @Get('search')
