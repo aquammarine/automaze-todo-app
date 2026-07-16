@@ -10,7 +10,6 @@ export const useEditTaskForm = (task: Task) => {
       title: task.title,
       description: task.description ?? "",
       priority: task.priority,
-      completed: task.completed,
     },
   });
 };
