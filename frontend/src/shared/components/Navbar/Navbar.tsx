@@ -8,7 +8,7 @@ function Navbar() {
   const logout = useLogoutMutation();
 
   return (
-    <header className="border-b bg-background/80 backdrop-blur-sm sticky top-0 z-10">
+    <header className="bg-background/80 backdrop-blur-sm sticky top-0 z-10">
       <div className="mx-auto flex h-14 max-w-5xl items-center justify-between px-4">
         <Link to="/" className="flex items-center gap-2">
           <span className="font-semibold">To-Do Application</span>
