@@ -1,20 +1,21 @@
-import { Optional } from '@nestjs/common';
-import { IsBoolean, IsNumber, IsString } from 'class-validator';
+import { IsBoolean, IsInt, IsOptional, IsString, Max, Min } from 'class-validator';
 
 export class UpdateTaskDto {
   @IsString()
-  @Optional()
+  @IsOptional()
   title?: string;
 
   @IsString()
-  @Optional()
+  @IsOptional()
   description?: string;
 
-  @IsNumber()
-  @Optional()
+  @IsInt()
+  @Min(1)
+  @Max(10)
+  @IsOptional()
   priority?: number;
 
   @IsBoolean()
-  @Optional()
+  @IsOptional()
   completed?: boolean;
 }

@@ -1,5 +1,4 @@
-import { Optional } from '@nestjs/common';
-import { IsBoolean, IsNotEmpty, IsNumber, IsString } from 'class-validator';
+import { IsInt, IsNotEmpty, IsOptional, IsString, Max, Min } from 'class-validator';
 
 export class CreateTaskDto {
   @IsString()
@@ -7,10 +6,11 @@ export class CreateTaskDto {
   title!: string;
 
   @IsString()
-  @Optional()
-  description!: string;
+  @IsOptional()
+  description?: string;
 
-  @IsNumber()
-  @IsNotEmpty()
+  @IsInt()
+  @Min(1)
+  @Max(10)
   priority!: number;
 }
