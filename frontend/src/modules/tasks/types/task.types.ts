@@ -1,4 +1,4 @@
-export interface Task {
+interface Task {
   id: string;
   title: string;
   description: string | null;
@@ -8,8 +8,10 @@ export interface Task {
   updatedAt: string;
 }
 
-export interface TaskFilterParams {
+interface TaskFilterParams {
   title?: string;
   completion?: "ALL" | "DONE" | "UNDONE";
   priorityOrder?: "ASC" | "DESC";
 }
+
+export type { Task, TaskFilterParams };
