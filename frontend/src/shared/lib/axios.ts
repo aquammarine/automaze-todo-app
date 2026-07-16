@@ -58,7 +58,8 @@ api.interceptors.response.use(
           { withCredentials: true },
         );
 
-        useAuthStore.getState().setAuth(data.accessToken, data.user);
+        const currentUser = useAuthStore.getState().user;
+        useAuthStore.getState().setAuth(data.accessToken, currentUser);
         processQueue(null);
 
         return api(originalRequest);
