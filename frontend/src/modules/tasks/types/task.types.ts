@@ -10,8 +10,8 @@ interface Task {
 
 interface TaskFilterParams {
   title?: string;
-  completion?: "ALL" | "DONE" | "UNDONE";
-  priorityOrder?: "ASC" | "DESC";
+  completion?: "all" | "done" | "undone";
+  priorityOrder?: "asc" | "desc";
 }
 
 export type { Task, TaskFilterParams };
