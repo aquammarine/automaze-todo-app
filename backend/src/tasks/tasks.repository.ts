@@ -4,6 +4,7 @@ import {
   TaskUncheckedCreateInput,
   TaskUncheckedUpdateInput,
 } from 'generated/prisma/models';
+import { FindAllRepositoryOptions } from './interfaces/find-all-options.interface';
 
 @Injectable()
 export class TasksRepository {
@@ -31,13 +32,15 @@ export class TasksRepository {
     });
   }
 
-  findAll(userId: string, completed?: boolean, title?: string) {
+  findAll(userId: string, options: FindAllRepositoryOptions = {}) {
+    const { completed, title, priorityOrder } = options;
     return this.prisma.task.findMany({
       where: {
         userId,
         ...(completed !== undefined && { completed }),
         ...(title && { title: { contains: title, mode: 'insensitive' } }),
       },
+      ...(priorityOrder && { orderBy: { priority: priorityOrder } }),
     });
   }
 }

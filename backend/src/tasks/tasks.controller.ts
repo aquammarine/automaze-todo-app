@@ -17,7 +17,11 @@ export class TasksController {
     @CurrentUser() user: { id: string },
     @Query() filter: TaskFilterDto,
   ): Promise<TaskResponseDto[]> {
-    return await this.tasksService.findAll(user.id, filter.completion, filter.title);
+    return await this.tasksService.findAll(user.id, {
+      completion: filter.completion,
+      title: filter.title,
+      priorityOrder: filter.priorityOrder,
+    });
   }
 
   @Get(':id')

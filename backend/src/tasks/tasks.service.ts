@@ -2,7 +2,8 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { TasksRepository } from './tasks.repository';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { UpdateTaskDto } from './dto/update-task.dto';
-import { CompletionFilter } from './dto/task-filter.dto';
+import { CompletionFilter } from './enums/completion-filter.enum';
+import { FindAllOptions } from './interfaces/find-all-options.interface';
 
 @Injectable()
 export class TasksService {
@@ -29,11 +30,12 @@ export class TasksService {
     return task;
   }
 
-  async findAll(userId: string, completion: CompletionFilter = CompletionFilter.ALL, title?: string) {
+  async findAll(userId: string, options: FindAllOptions = {}) {
+    const { completion = CompletionFilter.ALL, title, priorityOrder } = options;
     const completed =
       completion === CompletionFilter.DONE ? true :
       completion === CompletionFilter.UNDONE ? false :
       undefined;
-    return await this.tasksRepository.findAll(userId, completed, title);
+    return await this.tasksRepository.findAll(userId, { completed, title, priorityOrder });
   }
 }
