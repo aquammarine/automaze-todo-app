@@ -57,9 +57,7 @@ api.interceptors.response.use(
 
       try {
         const { data } = await api.post("/auth/refresh");
-
-        const currentUser = useAuthStore.getState().user;
-        useAuthStore.getState().setAuth(data.accessToken, currentUser);
+        useAuthStore.getState().setAuth(data.accessToken, data.user);
         processQueue(null);
 
         return api(originalRequest);
