@@ -57,8 +57,8 @@ function TaskFormFields<
 
       <Separator />
 
-      <div className="px-6 py-4">
-        <div className="flex flex-col gap-3">
+      <div className="px-6 py-3 sm:py-4">
+        <div className="flex flex-col gap-2 sm:gap-3">
           <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
             Priority
           </span>
@@ -66,12 +66,12 @@ function TaskFormFields<
             name={"priority" as Path<T>}
             control={control}
             render={({ field }) => (
-              <div className="flex gap-4">
+              <div className="flex gap-2 sm:gap-4">
                 {PRIORITY_GROUPS.map((group) => {
                   const classes = PRIORITY_COLOR_CLASSES[group.color];
                   const isGroupActive = group.priorities.includes(field.value as number);
                   return (
-                    <div key={group.label} className="flex flex-col gap-1.5">
+                    <div key={group.label} className="flex flex-col gap-1">
                       <div className="flex gap-1">
                         {group.priorities.map((p) => (
                           <button
@@ -79,7 +79,7 @@ function TaskFormFields<
                             type="button"
                             onClick={() => field.onChange(p)}
                             className={cn(
-                              "h-8 w-8 rounded-md border text-xs font-semibold transition-colors cursor-pointer",
+                              "h-7 w-7 sm:h-8 sm:w-8 rounded-md border text-xs font-semibold transition-colors cursor-pointer",
                               field.value === p ? classes.selected : classes.idle,
                             )}
                           >
