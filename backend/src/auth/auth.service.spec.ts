@@ -1,5 +1,9 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { BadRequestException, ConflictException, UnauthorizedException } from '@nestjs/common';
+import {
+  BadRequestException,
+  ConflictException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { AuthService } from './auth.service';
 import { UsersService } from 'src/users/users.service';
@@ -54,23 +58,36 @@ describe('AuthService', () => {
 
   describe('register', () => {
     it('throws ConflictException if email already taken', async () => {
-      mockUsersService.findByEmail.mockResolvedValue({ id: '1', email: 'a@b.com' });
+      mockUsersService.findByEmail.mockResolvedValue({
+        id: '1',
+        email: 'a@b.com',
+      });
 
-      await expect(service.register({ email: 'a@b.com', password: 'password123456' }))
-        .rejects.toThrow(ConflictException);
+      await expect(
+        service.register({ email: 'a@b.com', password: 'password123456' }),
+      ).rejects.toThrow(ConflictException);
     });
 
     it('hashes password and creates user', async () => {
       mockUsersService.findByEmail.mockResolvedValue(null);
-      mockUsersService.create.mockResolvedValue({ id: 'new-id', email: 'a@b.com' });
+      mockUsersService.create.mockResolvedValue({
+        id: 'new-id',
+        email: 'a@b.com',
+      });
       mockBcrypt.hash.mockResolvedValue('hashed');
       mockJwt.signAsync.mockResolvedValue('access-token');
       mockRedis.set.mockResolvedValue('OK');
 
-      const result = await service.register({ email: 'a@b.com', password: 'password123456' });
+      const result = await service.register({
+        email: 'a@b.com',
+        password: 'password123456',
+      });
 
       expect(mockBcrypt.hash).toHaveBeenCalledWith('password123456', 12);
-      expect(mockUsersService.create).toHaveBeenCalledWith({ email: 'a@b.com', password: 'hashed' });
+      expect(mockUsersService.create).toHaveBeenCalledWith({
+        email: 'a@b.com',
+        password: 'hashed',
+      });
       expect(result.user).toEqual({ id: 'new-id', email: 'a@b.com' });
       expect(result.tokens.accessToken).toBe('access-token');
     });
@@ -80,25 +97,38 @@ describe('AuthService', () => {
     it('throws BadRequestException if user not found', async () => {
       mockUsersService.findByEmail.mockResolvedValue(null);
 
-      await expect(service.login({ email: 'a@b.com', password: 'password123456' }))
-        .rejects.toThrow(BadRequestException);
+      await expect(
+        service.login({ email: 'a@b.com', password: 'password123456' }),
+      ).rejects.toThrow(BadRequestException);
     });
 
     it('throws BadRequestException if password invalid', async () => {
-      mockUsersService.findByEmail.mockResolvedValue({ id: '1', email: 'a@b.com', password: 'hashed' });
+      mockUsersService.findByEmail.mockResolvedValue({
+        id: '1',
+        email: 'a@b.com',
+        password: 'hashed',
+      });
       mockBcrypt.compare.mockResolvedValue(false);
 
-      await expect(service.login({ email: 'a@b.com', password: 'wrongpassword' }))
-        .rejects.toThrow(BadRequestException);
+      await expect(
+        service.login({ email: 'a@b.com', password: 'wrongpassword' }),
+      ).rejects.toThrow(BadRequestException);
     });
 
     it('returns user and tokens on valid credentials', async () => {
-      mockUsersService.findByEmail.mockResolvedValue({ id: '1', email: 'a@b.com', password: 'hashed' });
+      mockUsersService.findByEmail.mockResolvedValue({
+        id: '1',
+        email: 'a@b.com',
+        password: 'hashed',
+      });
       mockBcrypt.compare.mockResolvedValue(true);
       mockJwt.signAsync.mockResolvedValue('access-token');
       mockRedis.set.mockResolvedValue('OK');
 
-      const result = await service.login({ email: 'a@b.com', password: 'password123456' });
+      const result = await service.login({
+        email: 'a@b.com',
+        password: 'password123456',
+      });
 
       expect(result.user).toEqual({ id: '1', email: 'a@b.com' });
       expect(result.tokens.accessToken).toBe('access-token');
@@ -126,8 +156,9 @@ describe('AuthService', () => {
     it('throws UnauthorizedException if token not in redis', async () => {
       mockRedis.get.mockResolvedValue(null);
 
-      await expect(service.refresh('expired-token'))
-        .rejects.toThrow(UnauthorizedException);
+      await expect(service.refresh('expired-token')).rejects.toThrow(
+        UnauthorizedException,
+      );
     });
 
     it('throws BadRequestException if user not found', async () => {
@@ -135,14 +166,18 @@ describe('AuthService', () => {
       mockRedis.del.mockResolvedValue(1);
       mockUsersService.findById.mockResolvedValue(null);
 
-      await expect(service.refresh('valid-token'))
-        .rejects.toThrow(BadRequestException);
+      await expect(service.refresh('valid-token')).rejects.toThrow(
+        BadRequestException,
+      );
     });
 
     it('rotates token — deletes old, issues new', async () => {
       mockRedis.get.mockResolvedValue('user-id');
       mockRedis.del.mockResolvedValue(1);
-      mockUsersService.findById.mockResolvedValue({ id: 'user-id', email: 'a@b.com' });
+      mockUsersService.findById.mockResolvedValue({
+        id: 'user-id',
+        email: 'a@b.com',
+      });
       mockJwt.signAsync.mockResolvedValue('new-access-token');
       mockRedis.set.mockResolvedValue('OK');
 
@@ -150,9 +185,10 @@ describe('AuthService', () => {
 
       expect(mockRedis.del).toHaveBeenCalledWith('refresh:old-refresh-token');
       expect(mockRedis.set).toHaveBeenCalled();
-      expect(result.accessToken).toBe('new-access-token');
-      expect(result.refreshToken).toBeDefined();
-      expect(result.refreshToken).not.toBe('old-refresh-token');
+      expect(result.user.id).toBe('user-id');
+      expect(result.tokens.accessToken).toBe('new-access-token');
+      expect(result.tokens.refreshToken).toBeDefined();
+      expect(result.tokens.refreshToken).not.toBe('old-refresh-token');
     });
   });
 });
