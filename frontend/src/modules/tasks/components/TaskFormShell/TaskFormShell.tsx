@@ -1,4 +1,6 @@
 import {
+  Alert,
+  AlertDescription,
   Button,
   Dialog,
   DialogClose,
@@ -59,9 +61,9 @@ function TaskFormShell({
           {children}
 
           {error && (
-            <div className="bg-destructive/10 border-destructive/20 mx-6 mt-2 rounded-lg border px-4 py-3">
-              <span className="text-destructive text-sm">{error}</span>
-            </div>
+            <Alert variant="destructive" className="mx-6 mt-2">
+              <AlertDescription>{error}</AlertDescription>
+            </Alert>
           )}
 
           <div className="flex justify-end gap-2 p-4">

@@ -1,6 +1,6 @@
 import { Controller } from "react-hook-form";
 import { Link } from "@tanstack/react-router";
-import { Button, Field, FieldError, FieldGroup, FieldLabel, PasswordInput } from "@/shared/components/ui";
+import { Alert, AlertDescription, Button, Field, FieldError, FieldGroup, FieldLabel, PasswordInput } from "@/shared/components/ui";
 import { Input } from "@/shared/components/ui/input";
 import { useLoginForm } from "../../hooks/useLoginForm";
 import { useLoginMutation } from "../../hooks/useLoginMutation";
@@ -55,9 +55,9 @@ function LoginForm() {
       </FieldGroup>
 
       {errors.root && (
-        <div className="bg-destructive/10 border-destructive/20 rounded-lg border px-4 py-3">
-          <span className="text-destructive text-sm">{errors.root.message}</span>
-        </div>
+        <Alert variant="destructive">
+          <AlertDescription>{errors.root.message}</AlertDescription>
+        </Alert>
       )}
 
       <Button type="submit" size="lg" disabled={isSubmitting} className="w-full">
