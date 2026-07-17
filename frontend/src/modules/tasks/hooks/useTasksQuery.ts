@@ -4,7 +4,7 @@ import type { TaskFilterParams } from "../types";
 
 export const useTasksQuery = (filters?: TaskFilterParams) => {
   return useQuery({
-    queryKey: ["tasks", filters],
+    queryKey: ["tasks", filters?.completion, filters?.title, filters?.priorityOrder],
     queryFn: () => getTasks(filters),
     placeholderData: keepPreviousData,
   });
