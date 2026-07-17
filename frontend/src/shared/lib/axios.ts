@@ -38,7 +38,11 @@ api.interceptors.response.use(
   async (error) => {
     const originalRequest = error.config;
 
-    if (error.response?.status === 401 && !originalRequest._retry) {
+    if (
+      error.response?.status === 401 &&
+      !originalRequest._retry &&
+      !originalRequest.url?.includes("/auth/refresh")
+    ) {
       if (isRefreshing) {
         return new Promise((resolve, reject) => {
           failedQueue.push({
@@ -52,14 +56,8 @@ api.interceptors.response.use(
       isRefreshing = true;
 
       try {
-        const { data } = await axios.post(
-          `${api.defaults.baseURL}/auth/refresh`,
-          {},
-          { withCredentials: true },
-        );
-
-        const currentUser = useAuthStore.getState().user;
-        useAuthStore.getState().setAuth(data.accessToken, currentUser);
+        const { data } = await api.post("/auth/refresh");
+        useAuthStore.getState().setAuth(data.accessToken, data.user);
         processQueue(null);
 
         return api(originalRequest);
