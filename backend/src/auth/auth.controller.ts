@@ -9,6 +9,13 @@ import {
   UseGuards,
   UnauthorizedException,
 } from '@nestjs/common';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiBody,
+  ApiResponse,
+  ApiCookieAuth,
+} from '@nestjs/swagger';
 import { CurrentUser } from 'src/common/decorators/current-user.decorator';
 import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login.dto';
@@ -20,6 +27,7 @@ import { UsersService } from 'src/users/users.service';
 import { UserProfileDto } from 'src/users/dto/user-profile.dto';
 import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard';
 
+@ApiTags('auth')
 @Controller('auth')
 export class AuthController {
   constructor(
@@ -27,6 +35,10 @@ export class AuthController {
     private readonly usersService: UsersService,
   ) {}
 
+  @ApiOperation({ summary: 'Login with email and password' })
+  @ApiBody({ type: LoginDto })
+  @ApiResponse({ status: 201, type: LoginResponseDto })
+  @ApiResponse({ status: 401, description: 'Invalid credentials' })
   @Post('login')
   async login(
     @Body() dto: LoginDto,
@@ -44,6 +56,10 @@ export class AuthController {
     return { user, accessToken: tokens.accessToken };
   }
 
+  @ApiOperation({ summary: 'Register a new account' })
+  @ApiBody({ type: RegisterDto })
+  @ApiResponse({ status: 201, type: RegisterResponseDto })
+  @ApiResponse({ status: 409, description: 'Email already in use' })
   @Post('register')
   async register(
     @Body() dto: RegisterDto,
@@ -61,6 +77,9 @@ export class AuthController {
     return { user, accessToken: tokens.accessToken };
   }
 
+  @ApiOperation({ summary: 'Logout and clear refresh token cookie' })
+  @ApiCookieAuth('refreshToken')
+  @ApiResponse({ status: 204, description: 'Logged out' })
   @Post('logout')
   @HttpCode(204)
   async logout(
@@ -72,6 +91,10 @@ export class AuthController {
     response.clearCookie('refreshToken');
   }
 
+  @ApiOperation({ summary: 'Rotate refresh token and get new access token' })
+  @ApiCookieAuth('refreshToken')
+  @ApiResponse({ status: 201, schema: { properties: { accessToken: { type: 'string' } } } })
+  @ApiResponse({ status: 401, description: 'Missing or invalid refresh token' })
   @Post('refresh')
   async refresh(
     @Req() request: Request,
@@ -93,6 +116,10 @@ export class AuthController {
     return { accessToken };
   }
 
+  @ApiOperation({ summary: 'Get current authenticated user' })
+  @ApiCookieAuth('access_token')
+  @ApiResponse({ status: 200, type: UserProfileDto })
+  @ApiResponse({ status: 401, description: 'Not authenticated' })
   @Get('me')
   @UseGuards(JwtAuthGuard)
   async getMe(@CurrentUser() user: { id: string }): Promise<UserProfileDto> {
