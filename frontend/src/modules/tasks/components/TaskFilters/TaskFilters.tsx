@@ -45,7 +45,7 @@ function TaskFilters({ filters, onChange }: TaskFiltersProps) {
   };
 
   return (
-    <div className="flex items-center justify-between gap-4">
+    <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
       <div className="flex flex-col gap-1.5">
         <span className="text-muted-foreground text-xs font-medium">Status</span>
         <Tabs value={activeTab} onValueChange={handleTabChange}>
@@ -57,19 +57,19 @@ function TaskFilters({ filters, onChange }: TaskFiltersProps) {
         </Tabs>
       </div>
 
-      <div className="flex items-end gap-2">
-        <div className="flex flex-col gap-1.5">
+      <div className="flex flex-wrap items-end gap-2">
+        <div className="flex flex-col gap-1.5 flex-1 sm:flex-none">
           <span className="text-muted-foreground text-xs font-medium">Search</span>
           <Input
             placeholder="Search tasks..."
-            className="h-8 w-48"
+            className="h-8 w-full sm:w-48"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && e.preventDefault()}
           />
         </div>
 
-        <div className="flex flex-col gap-1.5">
+        <div className="flex flex-col gap-1.5 flex-1 sm:flex-none">
           <span className="text-muted-foreground text-xs font-medium">Sort by priority</span>
           <Select
           value={filters.priorityOrder ?? null}
@@ -81,7 +81,7 @@ function TaskFilters({ filters, onChange }: TaskFiltersProps) {
             });
           }}
         >
-          <SelectTrigger className="w-36">
+          <SelectTrigger className="w-full sm:w-36">
             <SelectValue placeholder="Priority">
               {filters.priorityOrder === "asc"
                 ? "Lowest priority"
