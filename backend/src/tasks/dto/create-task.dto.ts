@@ -1,0 +1,20 @@
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { IsInt, IsNotEmpty, IsOptional, IsString, Max, Min } from 'class-validator';
+
+export class CreateTaskDto {
+  @ApiProperty({ example: 'Buy groceries' })
+  @IsString()
+  @IsNotEmpty()
+  title!: string;
+
+  @ApiPropertyOptional({ example: 'Milk, eggs, bread' })
+  @IsString()
+  @IsOptional()
+  description?: string;
+
+  @ApiProperty({ example: 5, minimum: 1, maximum: 10 })
+  @IsInt()
+  @Min(1)
+  @Max(10)
+  priority!: number;
+}
