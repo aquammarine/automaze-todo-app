@@ -74,7 +74,7 @@ export class AuthService {
     return { accessToken, refreshToken };
   }
 
-  async refresh(refreshToken: string): Promise<AuthTokensDto> {
+  async refresh(refreshToken: string): Promise<AuthResultDto> {
     const userId = await this.redis.get(`refresh:${refreshToken}`);
     if (!userId) throw new UnauthorizedException('Token is expired or invalid');
 
@@ -83,6 +83,8 @@ export class AuthService {
     const user = await this.usersService.findById(userId);
     if (!user) throw new BadRequestException('Invalid user');
 
-    return await this.generateToken(user.id, user.email);
+    const tokens = await this.generateToken(user.id, user.email);
+
+    return { user: { id: user.id, email: user.email }, tokens };
   }
 }

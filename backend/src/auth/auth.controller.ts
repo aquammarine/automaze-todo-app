@@ -93,27 +93,26 @@ export class AuthController {
 
   @ApiOperation({ summary: 'Rotate refresh token and get new access token' })
   @ApiCookieAuth('refreshToken')
-  @ApiResponse({ status: 201, schema: { properties: { accessToken: { type: 'string' } } } })
+  @ApiResponse({ status: 201, type: LoginResponseDto })
   @ApiResponse({ status: 401, description: 'Missing or invalid refresh token' })
   @Post('refresh')
   async refresh(
     @Req() request: Request,
     @Res({ passthrough: true }) response: Response,
-  ): Promise<{ accessToken: string }> {
+  ): Promise<LoginResponseDto> {
     const oldRefreshToken = request.cookies['refreshToken'];
     if (!oldRefreshToken) throw new UnauthorizedException('No refresh token');
 
-    const { accessToken, refreshToken } =
-      await this.authService.refresh(oldRefreshToken);
+    const { user, tokens } = await this.authService.refresh(oldRefreshToken);
 
-    response.cookie('refreshToken', refreshToken, {
+    response.cookie('refreshToken', tokens.refreshToken, {
       httpOnly: true,
       sameSite: 'lax',
       secure: process.env.NODE_ENV === 'production',
       maxAge: 30 * 24 * 60 * 60 * 1000,
     });
 
-    return { accessToken };
+    return { user, accessToken: tokens.accessToken };
   }
 
   @ApiOperation({ summary: 'Get current authenticated user' })
