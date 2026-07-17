@@ -9,13 +9,15 @@ datasource db {
 }
 
 model User {
-  id       String @id     @default(uuid())
-  email    String @unique
-  password String
-  tasks    Task[]
+  id        String   @id @default(uuid())
+  email     String   @unique
+  password  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  tasks     Task[]
 }
 
-model Task{
+model Task {
   id          String   @id @default(uuid())
   title       String
   description String?
@@ -25,4 +27,6 @@ model Task{
   updatedAt   DateTime @updatedAt
   userId      String
   user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
 }
