@@ -1,5 +1,12 @@
-import { Trash2Icon } from "lucide-react";
+import { AlertTriangleIcon, Trash2Icon } from "lucide-react";
 import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogTitle,
+  AlertDialogTrigger,
   Badge,
   Button,
   Card,
@@ -44,15 +51,39 @@ function TaskCard({ task, onClick }: TaskCardProps) {
             className="ml-auto opacity-0 group-hover/card:opacity-100 transition-opacity"
             onClick={(e) => e.stopPropagation()}
           >
-            <Button
-              variant="ghost"
-              size="icon-sm"
-              disabled={remove.isPending}
-              onClick={() => remove.mutate(task.id)}
-              className="text-muted-foreground hover:text-destructive size-6"
-            >
-              <Trash2Icon className="size-3.5" />
-            </Button>
+            <AlertDialog>
+              <AlertDialogTrigger
+                render={
+                  <Button
+                    variant="ghost"
+                    size="icon-sm"
+                    className="text-muted-foreground hover:text-destructive size-6"
+                  >
+                    <Trash2Icon className="size-3.5" />
+                  </Button>
+                }
+              />
+              <AlertDialogContent size="sm">
+                <div className="flex items-center gap-2">
+                  <AlertTriangleIcon className="text-destructive size-5 shrink-0" />
+                  <AlertDialogTitle>Delete task?</AlertDialogTitle>
+                </div>
+                <AlertDialogDescription>
+                  "{task.title}" will be permanently deleted.
+                </AlertDialogDescription>
+                <div className="flex justify-end gap-2">
+                  <AlertDialogCancel size="sm">Cancel</AlertDialogCancel>
+                  <AlertDialogAction
+                    variant="destructive"
+                    size="sm"
+                    disabled={remove.isPending}
+                    onClick={() => remove.mutate(task.id)}
+                  >
+                    Delete
+                  </AlertDialogAction>
+                </div>
+              </AlertDialogContent>
+            </AlertDialog>
           </div>
         </div>
       </CardHeader>
