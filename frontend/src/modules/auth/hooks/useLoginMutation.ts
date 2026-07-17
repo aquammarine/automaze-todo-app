@@ -2,6 +2,7 @@ import { useMutation } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
 import type { UseFormSetError } from "react-hook-form";
 import { useAuthStore } from "@/shared/stores/auth.store";
+import { getApiErrorMessage, getApiStatusCode } from "@/shared/lib/errors";
 import { login } from "../api/auth.api";
 import type { LoginSchema } from "../schemas/auth.schemas";
 
@@ -14,8 +15,12 @@ export const useLoginMutation = (setError: UseFormSetError<LoginSchema>) => {
       useAuthStore.getState().setAuth(accessToken, user);
       navigate({ to: "/" });
     },
-    onError: (error: Error) => {
-      setError("root", { message: error.message ?? "Something went wrong. Please try again." });
+    onError: (error: unknown) => {
+      if (getApiStatusCode(error) === 400) {
+        setError("root", { message: "Invalid email or password." });
+        return;
+      }
+      setError("root", { message: getApiErrorMessage(error) });
     },
   });
 };

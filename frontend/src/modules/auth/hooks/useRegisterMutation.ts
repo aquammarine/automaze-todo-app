@@ -2,6 +2,7 @@ import { useMutation } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
 import type { UseFormSetError } from "react-hook-form";
 import { useAuthStore } from "@/shared/stores/auth.store";
+import { getApiErrorMessage, getApiStatusCode } from "@/shared/lib/errors";
 import { register } from "../api/auth.api";
 import type { RegisterSchema } from "../schemas/auth.schemas";
 
@@ -14,8 +15,12 @@ export const useRegisterMutation = (setError: UseFormSetError<RegisterSchema>) =
       useAuthStore.getState().setAuth(accessToken, user);
       navigate({ to: "/" });
     },
-    onError: (error: Error) => {
-      setError("root", { message: error.message ?? "Something went wrong. Please try again." });
+    onError: (error: unknown) => {
+      if (getApiStatusCode(error) === 409) {
+        setError("root", { message: "An account with this email already exists." });
+        return;
+      }
+      setError("root", { message: getApiErrorMessage(error) });
     },
   });
 };
