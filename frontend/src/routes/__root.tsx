@@ -2,6 +2,7 @@ import * as React from "react";
 import { Outlet, createRootRoute } from "@tanstack/react-router";
 import axios from "axios";
 import { useAuthStore } from "@/shared/stores/auth.store";
+import { Toaster } from "@/shared/components/ui/sonner";
 
 export const Route = createRootRoute({
   beforeLoad: async () => {
@@ -26,6 +27,7 @@ function RootComponent() {
   return (
     <React.Fragment>
       <Outlet />
+      <Toaster />
     </React.Fragment>
   );
 }

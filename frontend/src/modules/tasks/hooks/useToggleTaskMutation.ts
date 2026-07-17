@@ -1,4 +1,5 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
 import { updateTask } from "../api";
 
 export const useToggleTaskMutation = () => {
@@ -9,6 +10,9 @@ export const useToggleTaskMutation = () => {
       updateTask(id, { completed }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["tasks"] });
+    },
+    onError: () => {
+      toast.error("Failed to update task. Please try again.");
     },
   });
 };
