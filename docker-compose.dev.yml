@@ -47,15 +47,17 @@ services:
     container_name: todo_backend_dev
     image: node:22-alpine
     working_dir: /app
-    command: sh -c "npm install && npx prisma migrate deploy && npm run start:dev"
+    command: sh -c "npm install && npx prisma generate && npx prisma migrate deploy && npm run start:dev"
     env_file:
       - backend/.env
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
+      REDIS_HOST: redis
     ports:
       - "3000:3000"
     volumes:
       - ./backend:/app
       - /app/node_modules
-      - /app/generated
     depends_on:
       postgres:
         condition: service_healthy
@@ -74,6 +76,8 @@ services:
     volumes:
       - ./frontend:/app
       - /app/node_modules
+    env_file:
+      - frontend/.env
     depends_on:
       - backend
 
