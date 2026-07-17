@@ -1,20 +1,16 @@
 import * as React from "react";
 import { Outlet, createRootRoute } from "@tanstack/react-router";
-import axios from "axios";
+import { api } from "@/shared/lib/axios";
 import { useAuthStore } from "@/shared/stores/auth.store";
 import { Toaster } from "@/shared/components/ui/sonner";
 
 export const Route = createRootRoute({
   beforeLoad: async () => {
-    const { token, setAuth, user } = useAuthStore.getState();
+    const { token, setAuth } = useAuthStore.getState();
     if (!token) {
       try {
-        const { data } = await axios.post(
-          `${import.meta.env.VITE_API_URL}/auth/refresh`,
-          {},
-          { withCredentials: true },
-        );
-        setAuth(data.accessToken, user);
+        const { data } = await api.post("/auth/refresh");
+        setAuth(data.accessToken, data.user);
       } catch {
         // no valid refresh cookie — stay logged out
       }
