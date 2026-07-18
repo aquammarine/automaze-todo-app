@@ -27,6 +27,7 @@ export class TasksController {
       completion: filter.completion,
       title: filter.title,
       priorityOrder: filter.priorityOrder,
+      dueDateOrder: filter.dueDateOrder,
     });
   }
 
