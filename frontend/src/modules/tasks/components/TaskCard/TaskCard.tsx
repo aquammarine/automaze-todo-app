@@ -1,4 +1,12 @@
-import { AlertTriangleIcon, Trash2Icon } from "lucide-react";
+import {
+  AlertTriangleIcon,
+  CalendarIcon,
+  GripVerticalIcon,
+  Trash2Icon,
+} from "lucide-react";
+import { format, isPast, parseISO, startOfDay } from "date-fns";
+import { useDraggable } from "@dnd-kit/core";
+import { memo } from "react";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -25,18 +33,36 @@ interface TaskCardProps {
   onClick?: () => void;
 }
 
-function TaskCard({ task, onClick }: TaskCardProps) {
+const TaskCard = memo(function TaskCard({ task, onClick }: TaskCardProps) {
   const toggle = useToggleTaskMutation();
   const remove = useDeleteTaskMutation();
+  const { attributes, listeners, setNodeRef, isDragging } = useDraggable({
+    id: task.id,
+    data: { task },
+  });
+
+  const style = {
+    opacity: isDragging ? 0 : undefined,
+  };
 
   return (
     <Card
+      ref={setNodeRef}
+      style={style}
       size="sm"
       className="group/card cursor-pointer transition-shadow hover:shadow-md"
       onClick={onClick}
     >
       <CardHeader>
         <div className="flex items-start gap-2">
+          <div
+            {...attributes}
+            {...listeners}
+            onClick={(e) => e.stopPropagation()}
+            className="mt-0.5 cursor-grab active:cursor-grabbing text-muted-foreground shrink-0 touch-none"
+          >
+            <GripVerticalIcon className="size-4" />
+          </div>
           <div onClick={(e) => e.stopPropagation()}>
             <Checkbox
               checked={task.completed}
@@ -95,12 +121,28 @@ function TaskCard({ task, onClick }: TaskCardProps) {
         ) : (
           <span />
         )}
-        <Badge variant={getPriorityVariant(task.priority)}>
-          P{task.priority}
-        </Badge>
+        <div className="flex items-center gap-2 ml-auto shrink-0">
+          {task.dueDate &&
+            (() => {
+              const due = parseISO(task.dueDate);
+              const overdue = !task.completed && isPast(startOfDay(due));
+              return (
+                <Badge
+                  variant={overdue ? "secondary" : "ghost"}
+                  className="gap-1"
+                >
+                  <CalendarIcon className="size-3" />
+                  {format(due, "MMM d")}
+                </Badge>
+              );
+            })()}
+          <Badge variant={getPriorityVariant(task.priority)}>
+            P{task.priority}
+          </Badge>
+        </div>
       </CardContent>
     </Card>
   );
-}
+});
 
 export { TaskCard };

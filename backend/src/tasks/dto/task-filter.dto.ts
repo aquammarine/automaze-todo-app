@@ -18,4 +18,9 @@ export class TaskFilterDto {
   @IsEnum(SortOrder)
   @IsOptional()
   priorityOrder?: SortOrder;
+
+  @ApiPropertyOptional({ enum: SortOrder })
+  @IsEnum(SortOrder)
+  @IsOptional()
+  dueDateOrder?: SortOrder;
 }

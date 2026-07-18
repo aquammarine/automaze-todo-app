@@ -1,6 +1,6 @@
 import { Controller } from "react-hook-form";
 import type { Control, FieldValues, Path } from "react-hook-form";
-import { FieldError, Input, Separator } from "@/shared/components/ui";
+import { DatePicker, FieldError, Input, Separator } from "@/shared/components/ui";
 import { cn } from "@/shared/lib/utils";
 import { PRIORITY_GROUPS, PRIORITY_COLOR_CLASSES } from "../../utils/priority";
 
@@ -9,6 +9,7 @@ interface TaskFormFieldsProps<
     title: string;
     description?: string;
     priority: number;
+    dueDate?: string | null;
   }
 > {
   control: Control<T>;
@@ -19,6 +20,7 @@ function TaskFormFields<
     title: string;
     description?: string;
     priority: number;
+    dueDate?: string | null;
   }
 >({ control }: TaskFormFieldsProps<T>) {
   return (
@@ -98,6 +100,30 @@ function TaskFormFields<
                     </div>
                   );
                 })}
+              </div>
+            )}
+          />
+        </div>
+      </div>
+
+      <Separator />
+
+      <div className="px-6 py-3 sm:py-4">
+        <div className="flex flex-col gap-2 sm:gap-3">
+          <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
+            Due date
+          </span>
+          <Controller
+            name={"dueDate" as Path<T>}
+            control={control}
+            render={({ field, fieldState }) => (
+              <div className="flex flex-col gap-1">
+                <DatePicker
+                  value={field.value as string | null | undefined}
+                  onChange={field.onChange}
+                  placeholder="No due date"
+                />
+                <FieldError errors={[fieldState.error]} />
               </div>
             )}
           />
