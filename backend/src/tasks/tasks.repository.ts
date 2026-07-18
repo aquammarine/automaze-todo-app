@@ -4,7 +4,6 @@ import {
   TaskUncheckedCreateInput,
   TaskUncheckedUpdateInput,
 } from 'generated/prisma/models';
-import { NullsOrder } from 'generated/prisma/internal/prismaNamespace';
 import { FindAllRepositoryOptions } from './interfaces/find-all-options.interface';
 
 @Injectable()
@@ -44,7 +43,7 @@ export class TasksRepository {
       orderBy: [
         ...(priorityOrder ? [{ priority: priorityOrder }] : []),
         ...(dueDateOrder
-          ? [{ dueDate: { sort: dueDateOrder, nulls: NullsOrder.last } }]
+          ? [{ dueDate: { sort: dueDateOrder, nulls: 'last' as const } }]
           : []),
       ],
     });
