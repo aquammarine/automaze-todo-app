@@ -11,6 +11,7 @@ import {
 } from "@/shared/components/ui";
 import type { TaskFilterParams } from "../../types";
 import { useTaskSearch } from "../../hooks/useTaskSearch";
+import { getActiveTab } from "../../utils/filters";
 
 interface TaskFiltersProps {
   filters: TaskFilterParams;
@@ -60,12 +61,7 @@ function SortSelect({
 function TaskFilters({ filters, onChange }: TaskFiltersProps) {
   const { search, setSearch } = useTaskSearch(filters, onChange);
 
-  const activeTab =
-    filters.completion === "undone"
-      ? "undone"
-      : filters.completion === "done"
-        ? "done"
-        : "all";
+  const activeTab = getActiveTab(filters.completion);
 
   return (
     <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
