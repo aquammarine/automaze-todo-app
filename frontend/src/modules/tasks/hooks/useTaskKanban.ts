@@ -1,6 +1,7 @@
 import {
   KeyboardSensor,
   PointerSensor,
+  TouchSensor,
   type DragEndEvent,
   type DragStartEvent,
   useSensor,
@@ -19,6 +20,9 @@ export function useTaskKanban() {
   const sensors = useSensors(
     useSensor(PointerSensor, {
       activationConstraint: { distance: 8 },
+    }),
+    useSensor(TouchSensor, {
+      activationConstraint: { delay: 250, tolerance: 5 },
     }),
     useSensor(KeyboardSensor, {
       coordinateGetter: sortableKeyboardCoordinates,

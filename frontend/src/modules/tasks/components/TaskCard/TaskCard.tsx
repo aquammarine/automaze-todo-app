@@ -53,7 +53,7 @@ const TaskCard = memo(function TaskCard({ task, onClick }: TaskCardProps) {
             {...attributes}
             {...listeners}
             onClick={(e) => e.stopPropagation()}
-            className="mt-0.5 cursor-grab active:cursor-grabbing text-muted-foreground shrink-0"
+            className="mt-0.5 cursor-grab active:cursor-grabbing text-muted-foreground shrink-0 touch-none"
           >
             <GripVerticalIcon className="size-4" />
           </div>
