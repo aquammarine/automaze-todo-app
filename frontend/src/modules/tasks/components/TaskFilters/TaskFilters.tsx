@@ -1,5 +1,3 @@
-import { useEffect, useRef, useState } from "react";
-import { useDebounce } from "@/shared/hooks/useDebounce";
 import {
   Input,
   Select,
@@ -12,43 +10,79 @@ import {
   TabsTrigger,
 } from "@/shared/components/ui";
 import type { TaskFilterParams } from "../../types";
+import { useTaskSearch } from "../../hooks/useTaskSearch";
 
 interface TaskFiltersProps {
   filters: TaskFilterParams;
   onChange: (filters: TaskFilterParams) => void;
 }
 
-type TabValue = "all" | "undone" | "done";
+interface SortSelectProps {
+  label: string;
+  value?: string | null;
+  onChange: (value: string | null) => void;
+  options: { value: string; label: string }[];
+  placeholder: string;
+}
+
+function SortSelect({
+  label,
+  value,
+  onChange,
+  options,
+  placeholder,
+}: SortSelectProps) {
+  return (
+    <div className="flex flex-col gap-1.5 flex-1 sm:flex-none">
+      <span className="text-muted-foreground text-xs font-medium">{label}</span>
+      <Select
+        value={value ?? null}
+        onValueChange={(v) => onChange(v === "none" ? null : v)}
+      >
+        <SelectTrigger className="w-full sm:w-36">
+          <SelectValue placeholder={placeholder}>
+            {options.find((o) => o.value === value)?.label ?? placeholder}
+          </SelectValue>
+        </SelectTrigger>
+        <SelectContent alignItemWithTrigger={false}>
+          <SelectItem value="none">Default</SelectItem>
+          {options.map((o) => (
+            <SelectItem key={o.value} value={o.value}>
+              {o.label}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
+    </div>
+  );
+}
 
 function TaskFilters({ filters, onChange }: TaskFiltersProps) {
-  const [search, setSearch] = useState(filters.title ?? "");
-  const debouncedSearch = useDebounce(search, 400);
-  const filtersRef = useRef(filters);
-  filtersRef.current = filters;
+  const { search, setSearch } = useTaskSearch(filters, onChange);
 
-  useEffect(() => {
-    onChange({ ...filtersRef.current, title: debouncedSearch || undefined });
-  }, [debouncedSearch]);
-
-  const activeTab: TabValue =
+  const activeTab =
     filters.completion === "undone"
       ? "undone"
       : filters.completion === "done"
         ? "done"
         : "all";
 
-  const handleTabChange = (value: string) => {
-    onChange({
-      ...filters,
-      completion: value === "all" ? undefined : (value as "undone" | "done"),
-    });
-  };
-
   return (
     <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
       <div className="flex flex-col gap-1.5">
-        <span className="text-muted-foreground text-xs font-medium">Status</span>
-        <Tabs value={activeTab} onValueChange={handleTabChange}>
+        <span className="text-muted-foreground text-xs font-medium">
+          Status
+        </span>
+        <Tabs
+          value={activeTab}
+          onValueChange={(value) =>
+            onChange({
+              ...filters,
+              completion:
+                value === "all" ? undefined : (value as "undone" | "done"),
+            })
+          }
+        >
           <TabsList>
             <TabsTrigger value="all">All</TabsTrigger>
             <TabsTrigger value="undone">To-do</TabsTrigger>
@@ -59,7 +93,9 @@ function TaskFilters({ filters, onChange }: TaskFiltersProps) {
 
       <div className="flex flex-wrap items-end gap-2">
         <div className="flex flex-col gap-1.5 flex-1 sm:flex-none">
-          <span className="text-muted-foreground text-xs font-medium">Search</span>
+          <span className="text-muted-foreground text-xs font-medium">
+            Search
+          </span>
           <Input
             placeholder="Search tasks..."
             className="h-8 w-full sm:w-48"
@@ -69,63 +105,37 @@ function TaskFilters({ filters, onChange }: TaskFiltersProps) {
           />
         </div>
 
-        <div className="flex flex-col gap-1.5 flex-1 sm:flex-none">
-          <span className="text-muted-foreground text-xs font-medium">Sort by priority</span>
-          <Select
-            value={filters.priorityOrder ?? null}
-            onValueChange={(value) => {
-              const v = value as string;
-              onChange({
-                ...filters,
-                priorityOrder: v === "none" ? undefined : (v as "asc" | "desc"),
-              });
-            }}
-          >
-            <SelectTrigger className="w-full sm:w-36">
-              <SelectValue placeholder="Priority">
-                {filters.priorityOrder === "asc"
-                  ? "Lowest priority"
-                  : filters.priorityOrder === "desc"
-                    ? "Highest priority"
-                    : "Priority"}
-              </SelectValue>
-            </SelectTrigger>
-            <SelectContent alignItemWithTrigger={false}>
-              <SelectItem value="none">Default</SelectItem>
-              <SelectItem value="asc">Lowest priority</SelectItem>
-              <SelectItem value="desc">Highest priority</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
+        <SortSelect
+          label="Sort by priority"
+          value={filters.priorityOrder}
+          onChange={(v) =>
+            onChange({
+              ...filters,
+              priorityOrder: v as "asc" | "desc" | undefined,
+            })
+          }
+          placeholder="Priority"
+          options={[
+            { value: "asc", label: "Lowest priority" },
+            { value: "desc", label: "Highest priority" },
+          ]}
+        />
 
-        <div className="flex flex-col gap-1.5 flex-1 sm:flex-none">
-          <span className="text-muted-foreground text-xs font-medium">Sort by due date</span>
-          <Select
-            value={filters.dueDateOrder ?? null}
-            onValueChange={(value) => {
-              const v = value as string;
-              onChange({
-                ...filters,
-                dueDateOrder: v === "none" ? undefined : (v as "asc" | "desc"),
-              });
-            }}
-          >
-            <SelectTrigger className="w-full sm:w-36">
-              <SelectValue placeholder="Due date">
-                {filters.dueDateOrder === "asc"
-                  ? "Earliest first"
-                  : filters.dueDateOrder === "desc"
-                    ? "Latest first"
-                    : "Due date"}
-              </SelectValue>
-            </SelectTrigger>
-            <SelectContent alignItemWithTrigger={false}>
-              <SelectItem value="none">Default</SelectItem>
-              <SelectItem value="asc">Earliest first</SelectItem>
-              <SelectItem value="desc">Latest first</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
+        <SortSelect
+          label="Sort by due date"
+          value={filters.dueDateOrder}
+          onChange={(v) =>
+            onChange({
+              ...filters,
+              dueDateOrder: v as "asc" | "desc" | undefined,
+            })
+          }
+          placeholder="Due date"
+          options={[
+            { value: "asc", label: "Earliest first" },
+            { value: "desc", label: "Latest first" },
+          ]}
+        />
       </div>
     </div>
   );
