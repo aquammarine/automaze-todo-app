@@ -72,30 +72,59 @@ function TaskFilters({ filters, onChange }: TaskFiltersProps) {
         <div className="flex flex-col gap-1.5 flex-1 sm:flex-none">
           <span className="text-muted-foreground text-xs font-medium">Sort by priority</span>
           <Select
-          value={filters.priorityOrder ?? null}
-          onValueChange={(value) => {
-            const v = value as string;
-            onChange({
-              ...filters,
-              priorityOrder: v === "none" ? undefined : (v as "asc" | "desc"),
-            });
-          }}
-        >
-          <SelectTrigger className="w-full sm:w-36">
-            <SelectValue placeholder="Priority">
-              {filters.priorityOrder === "asc"
-                ? "Lowest priority"
-                : filters.priorityOrder === "desc"
-                  ? "Highest priority"
-                  : "Priority"}
-            </SelectValue>
-          </SelectTrigger>
-          <SelectContent alignItemWithTrigger={false}>
-            <SelectItem value="none">Default</SelectItem>
-            <SelectItem value="asc">Lowest priority</SelectItem>
-            <SelectItem value="desc">Highest priority</SelectItem>
-          </SelectContent>
-        </Select>
+            value={filters.priorityOrder ?? null}
+            onValueChange={(value) => {
+              const v = value as string;
+              onChange({
+                ...filters,
+                priorityOrder: v === "none" ? undefined : (v as "asc" | "desc"),
+              });
+            }}
+          >
+            <SelectTrigger className="w-full sm:w-36">
+              <SelectValue placeholder="Priority">
+                {filters.priorityOrder === "asc"
+                  ? "Lowest priority"
+                  : filters.priorityOrder === "desc"
+                    ? "Highest priority"
+                    : "Priority"}
+              </SelectValue>
+            </SelectTrigger>
+            <SelectContent alignItemWithTrigger={false}>
+              <SelectItem value="none">Default</SelectItem>
+              <SelectItem value="asc">Lowest priority</SelectItem>
+              <SelectItem value="desc">Highest priority</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+
+        <div className="flex flex-col gap-1.5 flex-1 sm:flex-none">
+          <span className="text-muted-foreground text-xs font-medium">Sort by due date</span>
+          <Select
+            value={filters.dueDateOrder ?? null}
+            onValueChange={(value) => {
+              const v = value as string;
+              onChange({
+                ...filters,
+                dueDateOrder: v === "none" ? undefined : (v as "asc" | "desc"),
+              });
+            }}
+          >
+            <SelectTrigger className="w-full sm:w-36">
+              <SelectValue placeholder="Due date">
+                {filters.dueDateOrder === "asc"
+                  ? "Earliest first"
+                  : filters.dueDateOrder === "desc"
+                    ? "Latest first"
+                    : "Due date"}
+              </SelectValue>
+            </SelectTrigger>
+            <SelectContent alignItemWithTrigger={false}>
+              <SelectItem value="none">Default</SelectItem>
+              <SelectItem value="asc">Earliest first</SelectItem>
+              <SelectItem value="desc">Latest first</SelectItem>
+            </SelectContent>
+          </Select>
         </div>
       </div>
     </div>
