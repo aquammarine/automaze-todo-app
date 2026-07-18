@@ -99,3 +99,4 @@ export {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "./alert-dialog";
+export { Calendar, CalendarDayButton } from "./calendar";
