@@ -1,4 +1,6 @@
-import { AlertTriangleIcon, Trash2Icon } from "lucide-react";
+import { AlertTriangleIcon, GripVerticalIcon, Trash2Icon } from "lucide-react";
+import { useDraggable } from "@dnd-kit/core";
+import { memo } from "react";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -25,18 +27,36 @@ interface TaskCardProps {
   onClick?: () => void;
 }
 
-function TaskCard({ task, onClick }: TaskCardProps) {
+const TaskCard = memo(function TaskCard({ task, onClick }: TaskCardProps) {
   const toggle = useToggleTaskMutation();
   const remove = useDeleteTaskMutation();
+  const { attributes, listeners, setNodeRef, isDragging } = useDraggable({
+    id: task.id,
+    data: { task },
+  });
+
+  const style = {
+    opacity: isDragging ? 0 : undefined,
+  };
 
   return (
     <Card
+      ref={setNodeRef}
+      style={style}
       size="sm"
       className="group/card cursor-pointer transition-shadow hover:shadow-md"
       onClick={onClick}
     >
       <CardHeader>
         <div className="flex items-start gap-2">
+          <div
+            {...attributes}
+            {...listeners}
+            onClick={(e) => e.stopPropagation()}
+            className="mt-0.5 cursor-grab active:cursor-grabbing text-muted-foreground shrink-0"
+          >
+            <GripVerticalIcon className="size-4" />
+          </div>
           <div onClick={(e) => e.stopPropagation()}>
             <Checkbox
               checked={task.completed}
@@ -101,6 +121,6 @@ function TaskCard({ task, onClick }: TaskCardProps) {
       </CardContent>
     </Card>
   );
-}
+});
 
 export { TaskCard };
