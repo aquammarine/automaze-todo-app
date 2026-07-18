@@ -31,11 +31,23 @@ export class TasksService {
   }
 
   async findAll(userId: string, options: FindAllOptions = {}) {
-    const { completion = CompletionFilter.ALL, title, priorityOrder } = options;
+    const {
+      completion = CompletionFilter.ALL,
+      title,
+      priorityOrder,
+      dueDateOrder,
+    } = options;
     const completed =
-      completion === CompletionFilter.DONE ? true :
-      completion === CompletionFilter.UNDONE ? false :
-      undefined;
-    return await this.tasksRepository.findAll(userId, { completed, title, priorityOrder });
+      completion === CompletionFilter.DONE
+        ? true
+        : completion === CompletionFilter.UNDONE
+          ? false
+          : undefined;
+    return await this.tasksRepository.findAll(userId, {
+      completed,
+      title,
+      priorityOrder,
+      dueDateOrder,
+    });
   }
 }
