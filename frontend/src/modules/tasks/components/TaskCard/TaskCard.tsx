@@ -1,4 +1,9 @@
-import { AlertTriangleIcon, CalendarIcon, GripVerticalIcon, Trash2Icon } from "lucide-react";
+import {
+  AlertTriangleIcon,
+  CalendarIcon,
+  GripVerticalIcon,
+  Trash2Icon,
+} from "lucide-react";
 import { format, isPast, parseISO, startOfDay } from "date-fns";
 import { useDraggable } from "@dnd-kit/core";
 import { memo } from "react";
@@ -18,7 +23,6 @@ import {
   CardTitle,
   Checkbox,
 } from "@/shared/components/ui";
-import { cn } from "@/shared/lib/utils";
 import type { Task } from "../../types";
 import { useToggleTaskMutation } from "../../hooks/useToggleTaskMutation";
 import { useDeleteTaskMutation } from "../../hooks/useDeleteTaskMutation";
@@ -118,16 +122,20 @@ const TaskCard = memo(function TaskCard({ task, onClick }: TaskCardProps) {
           <span />
         )}
         <div className="flex items-center gap-2 ml-auto shrink-0">
-          {task.dueDate && (() => {
-            const due = parseISO(task.dueDate);
-            const overdue = !task.completed && isPast(startOfDay(due));
-            return (
-              <span className={cn("flex items-center gap-1 text-xs", overdue ? "text-destructive" : "text-muted-foreground")}>
-                <CalendarIcon className="size-3" />
-                {format(due, "MMM d")}
-              </span>
-            );
-          })()}
+          {task.dueDate &&
+            (() => {
+              const due = parseISO(task.dueDate);
+              const overdue = !task.completed && isPast(startOfDay(due));
+              return (
+                <Badge
+                  variant={overdue ? "secondary" : "ghost"}
+                  className="gap-1"
+                >
+                  <CalendarIcon className="size-3" />
+                  {format(due, "MMM d")}
+                </Badge>
+              );
+            })()}
           <Badge variant={getPriorityVariant(task.priority)}>
             P{task.priority}
           </Badge>
