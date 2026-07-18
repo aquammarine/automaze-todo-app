@@ -5,10 +5,12 @@ export interface FindAllOptions {
   completion?: CompletionFilter;
   title?: string;
   priorityOrder?: SortOrder;
+  dueDateOrder?: SortOrder;
 }
 
 export interface FindAllRepositoryOptions {
   completed?: boolean;
   title?: string;
   priorityOrder?: SortOrder;
+  dueDateOrder?: SortOrder;
 }

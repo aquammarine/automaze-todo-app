@@ -54,9 +54,9 @@ export class AuthService {
     return { user: { id: user.id, email: user.email }, tokens };
   }
 
-  async logout(refreshToken: string) {
+  async logout(refreshToken: string): Promise<void> {
     if (!refreshToken) return;
-    return await this.redis.del(`refresh:${refreshToken}`);
+    await this.redis.del(`refresh:${refreshToken}`);
   }
 
   async generateToken(id: string, email: string): Promise<AuthTokensDto> {

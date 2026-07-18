@@ -1,4 +1,10 @@
-import { AlertTriangleIcon, GripVerticalIcon, Trash2Icon } from "lucide-react";
+import {
+  AlertTriangleIcon,
+  CalendarIcon,
+  GripVerticalIcon,
+  Trash2Icon,
+} from "lucide-react";
+import { format, isPast, parseISO, startOfDay } from "date-fns";
 import { useDraggable } from "@dnd-kit/core";
 import { memo } from "react";
 import {
@@ -115,9 +121,25 @@ const TaskCard = memo(function TaskCard({ task, onClick }: TaskCardProps) {
         ) : (
           <span />
         )}
-        <Badge variant={getPriorityVariant(task.priority)}>
-          P{task.priority}
-        </Badge>
+        <div className="flex items-center gap-2 ml-auto shrink-0">
+          {task.dueDate &&
+            (() => {
+              const due = parseISO(task.dueDate);
+              const overdue = !task.completed && isPast(startOfDay(due));
+              return (
+                <Badge
+                  variant={overdue ? "secondary" : "ghost"}
+                  className="gap-1"
+                >
+                  <CalendarIcon className="size-3" />
+                  {format(due, "MMM d")}
+                </Badge>
+              );
+            })()}
+          <Badge variant={getPriorityVariant(task.priority)}>
+            P{task.priority}
+          </Badge>
+        </div>
       </CardContent>
     </Card>
   );

@@ -173,6 +173,27 @@ describe('App (e2e)', () => {
           .expect(400);
       });
 
+      it('400 — invalid dueDate format', async () => {
+        await request(app.getHttpServer())
+          .post('/tasks')
+          .set('Authorization', `Bearer ${accessToken}`)
+          .send({ title: 'Test', priority: 5, dueDate: 'not-a-date' })
+          .expect(400);
+      });
+
+      it('201 — creates task with dueDate', async () => {
+        const res = await request(app.getHttpServer())
+          .post('/tasks')
+          .set('Authorization', `Bearer ${accessToken}`)
+          .send({ title: 'Task with due date', priority: 3, dueDate: '2027-01-01T00:00:00.000Z' })
+          .expect(201);
+
+        expect(res.body.dueDate).toBeDefined();
+        await request(app.getHttpServer())
+          .delete(`/tasks/${res.body.id}`)
+          .set('Authorization', `Bearer ${accessToken}`);
+      });
+
       it('401 — no token', async () => {
         await request(app.getHttpServer())
           .post('/tasks')
@@ -199,6 +220,15 @@ describe('App (e2e)', () => {
           .expect(200);
 
         expect(res.body.every((t: { completed: boolean }) => t.completed === true)).toBe(true);
+      });
+
+      it('200 — sorts by dueDateOrder=asc', async () => {
+        const res = await request(app.getHttpServer())
+          .get('/tasks?dueDateOrder=asc')
+          .set('Authorization', `Bearer ${accessToken}`)
+          .expect(200);
+
+        expect(Array.isArray(res.body)).toBe(true);
       });
 
       it('200 — filters by title', async () => {
@@ -245,6 +275,26 @@ describe('App (e2e)', () => {
 
         expect(res.body.completed).toBe(true);
         expect(res.body.title).toBe('Buy groceries updated');
+      });
+
+      it('200 — sets dueDate', async () => {
+        const res = await request(app.getHttpServer())
+          .patch(`/tasks/${taskId}`)
+          .set('Authorization', `Bearer ${accessToken}`)
+          .send({ dueDate: '2027-06-15T00:00:00.000Z' })
+          .expect(200);
+
+        expect(res.body.dueDate).toBeDefined();
+      });
+
+      it('200 — clears dueDate with null', async () => {
+        const res = await request(app.getHttpServer())
+          .patch(`/tasks/${taskId}`)
+          .set('Authorization', `Bearer ${accessToken}`)
+          .send({ dueDate: null })
+          .expect(200);
+
+        expect(res.body.dueDate).toBeNull();
       });
 
       it('404 — unknown id', async () => {

@@ -33,14 +33,19 @@ export class TasksRepository {
   }
 
   findAll(userId: string, options: FindAllRepositoryOptions = {}) {
-    const { completed, title, priorityOrder } = options;
+    const { completed, title, priorityOrder, dueDateOrder } = options;
     return this.prisma.task.findMany({
       where: {
         userId,
         ...(completed !== undefined && { completed }),
         ...(title && { title: { contains: title, mode: 'insensitive' } }),
       },
-      ...(priorityOrder && { orderBy: { priority: priorityOrder } }),
+      orderBy: [
+        ...(priorityOrder ? [{ priority: priorityOrder }] : []),
+        ...(dueDateOrder
+          ? [{ dueDate: { sort: dueDateOrder, nulls: 'last' as const } }]
+          : []),
+      ],
     });
   }
 }
