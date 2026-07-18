@@ -64,6 +64,7 @@ function DatePicker({
               mode="single"
               selected={selected}
               onSelect={handleSelect}
+              disabled={{ before: new Date() }}
               autoFocus
             />
           </Popover.Popup>
