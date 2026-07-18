@@ -4,6 +4,7 @@ interface Task {
   description: string | null;
   priority: number;
   completed: boolean;
+  dueDate: string | null;
   createdAt: string;
   updatedAt: string;
 }
