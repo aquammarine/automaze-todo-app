@@ -10,6 +10,7 @@ export const useEditTaskForm = (task: Task) => {
       title: task.title,
       description: task.description ?? "",
       priority: task.priority,
+      dueDate: task.dueDate ?? undefined,
     },
   });
 };
