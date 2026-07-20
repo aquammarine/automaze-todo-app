@@ -54,6 +54,7 @@ cd backend
 cp .env.example .env   # fill in values
 npm install
 npx prisma migrate deploy
+npm run db:seed   # optional: seed demo data
 npm run start:dev
 
 # Frontend (separate terminal)
