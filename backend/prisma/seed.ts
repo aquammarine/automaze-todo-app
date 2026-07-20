@@ -1,4 +1,4 @@
-import { PrismaClient } from '../generated/prisma/client.js';
+import { PrismaClient } from '../generated/prisma/client';
 import { PrismaPg } from '@prisma/adapter-pg';
 import * as bcrypt from 'bcrypt';
 
@@ -11,7 +11,7 @@ async function main() {
   await prisma.task.deleteMany();
   await prisma.user.deleteMany();
 
-  const hashedPassword = await bcrypt.hash('password123', 10);
+  const hashedPassword = await bcrypt.hash('password123!', 12);
 
   const alice = await prisma.user.create({
     data: {
@@ -21,7 +21,8 @@ async function main() {
         create: [
           {
             title: 'Set up project structure',
-            description: 'Initialize repo, install dependencies, configure linting',
+            description:
+              'Initialize repo, install dependencies, configure linting',
             priority: 1,
             completed: true,
           },
