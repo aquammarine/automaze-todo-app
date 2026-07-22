@@ -12,7 +12,7 @@ function TasksPage() {
   const [createOpen, setCreateOpen] = useState(false);
   const [editingTask, setEditingTask] = useState<Task | null>(null);
   const [filters, setFilters] = useState<TaskFilterParams>({});
-  const { data: tasks, isFetching, isError } = useTasksQuery(filters);
+  const { data: tasks, isLoading, isError } = useTasksQuery(filters);
 
   if (isError) {
     return (
@@ -35,7 +35,7 @@ function TasksPage() {
 
         <TaskFilters filters={filters} onChange={setFilters} />
 
-        {isFetching ? (
+        {isLoading ? (
           <TaskKanbanSkeleton completion={filters.completion} />
         ) : (
           <TaskKanban
